@@ -1,0 +1,88 @@
+import React from 'react';
+
+function CameraGrid({
+    selectedCameras,
+    recordingStates,
+    recordingDurations,
+    onToggleRecording,
+    onDurationChange
+}) {
+    const durationOptions = [
+        { value: 300, label: '5 dakika' },
+        { value: 600, label: '10 dakika' },
+        { value: 1800, label: '30 dakika' },
+        { value: 3600, label: '1 saat' },
+        { value: 7200, label: '2 saat' },
+        { value: 14400, label: '4 saat' }
+    ];
+
+    return (
+        <div className="container mx-auto p-4">
+            <div className="grid grid-cols-2 gap-4">
+                {selectedCameras.length > 0 ? (
+                    selectedCameras.map((camera) => (
+                        <div key={camera.id} className="relative border border-gray-200 rounded-lg shadow-lg overflow-hidden bg-white">
+                            <div className="w-[730px] h-[400px] relative">
+                                <img
+                                    className="w-full h-full object-cover"
+                                    src={camera.url}
+                                    alt={`Feed from ${camera.id}`}
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "https://via.placeholder.com/800x600?text=Kamera+Offline";
+                                    }}
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black opacity-40"></div>
+                                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-white p-3">
+                                    <div className="flex flex-col space-y-4"> {/* Daha fazla boşluk ekledik */}
+                                        <div className="flex justify-between items-center">
+                                            <h4 className="text-lg font-semibold">{camera.id}</h4>
+                                            <div className="flex items-center gap-4"> {/* Butonlar arasında daha fazla boşluk ekledik */}
+                                                {recordingStates[camera.id] && (
+                                                    <div className="flex items-center">
+                                                        <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse mr-2"></div> {/* Boyutu büyüttük */}
+                                                        <span className="text-sm">Kayıt</span>
+                                                    </div>
+                                                )}
+                                                <button
+                                                    onClick={() => onToggleRecording(camera.id)}
+                                                    className={`px-4 py-2 rounded-md transition-colors ${recordingStates[camera.id]
+                                                        ? 'bg-red-500 hover:bg-red-600'
+                                                        : 'bg-green-500 hover:bg-green-600'
+                                                        }`}
+                                                >
+                                                    {recordingStates[camera.id] ? 'Durdur' : 'Kaydet'}
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-between">
+                                            <label className="text-sm">Kayıt Süresi:</label>
+                                            <select
+                                                className="ml-2 bg-gray-700 text-white rounded px-3 py-2 text-sm"
+                                                value={recordingDurations[camera.id] || ''}
+                                                onChange={(e) => onDurationChange(camera.id, e.target.value)}
+                                                disabled={recordingStates[camera.id]}
+                                            >
+                                                <option value="">Süre Seç</option>
+                                                {durationOptions.map(option => (
+                                                    <option key={option.value} value={option.value}>
+                                                        {option.label}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <p className="text-center col-span-full text-lg font-semibold">Kamera(lar) Seçilmedi</p>
+                )}
+            </div>
+        </div>
+    );
+}
+
+export default CameraGrid;
