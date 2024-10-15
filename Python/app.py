@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)  # This will enable CORS for all routes
 
 # Fotoğrafların kaydedileceği ana klasör
-PHOTOS_DIR = r"C:\Users\tarik\OneDrive\Masaüstü\React\cam\Photos"
+PHOTOS_DIR = r"C:\Users\tarik\OneDrive\Masaüstü\React\camera\Photos"
 
 def capture_image(camera_url, folder_name):
     try:
