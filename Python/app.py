@@ -12,7 +12,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Directory where photos will be saved
-PHOTOS_DIR = r"C:\Users\tarik\OneDrive\Masaüstü\React\camera\Photos"
+PHOTOS_DIR = r"Kendi Dosya Yolunu Gir"
 
 def capture_image(camera_url, camera_id):
     try:
