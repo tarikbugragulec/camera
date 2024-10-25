@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-function CameraController({ allCameras, onSelectCamera, openAllCameras, closeAllCameras, selectedCameras }) {
-    // State declarations for capture settings
-    const [captureInterval, setCaptureInterval] = useState(5);
-    const [captureCount, setCaptureCount] = useState(1);
+function CameraController({ allCameras, onSelectCamera, openAllCameras, closeAllCameras, selectedCameras, captureSettings }) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -13,10 +10,11 @@ function CameraController({ allCameras, onSelectCamera, openAllCameras, closeAll
         setIsLoading(true);
         setError(null);
         try {
-            await axios.post('http://localhost:5000/api/capture', {
+            await axios.post('http://localhost:5000/api/schedule', {
                 cameras: selectedCameras,
-                interval: captureInterval,
-                count: captureCount
+                interval: captureSettings.interval, // interval from captureSettings
+                start_time: captureSettings.startDate.toString(), // startDate from captureSettings
+                end_time: captureSettings.endDate.toString(), // endDate from captureSettings
             });
             // You can add a success message here if needed
         } catch (error) {
@@ -37,7 +35,6 @@ function CameraController({ allCameras, onSelectCamera, openAllCameras, closeAll
             return `Error: ${error.message}`;
         }
     };
-
 
     return (
         <div className="flex flex-col space-y-4">
@@ -69,6 +66,7 @@ function CameraController({ allCameras, onSelectCamera, openAllCameras, closeAll
                     Tüm Kameraları Kapat
                 </button>
             </div>
+
             {/* Error message */}
             {error && <p className="text-red-500 mb-4">{error}</p>}
         </div>

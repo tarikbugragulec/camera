@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import CameraGrid from './Components/CameraGrid';
 import CameraController from './Components/CameraController';
+import axios from 'axios';
 
 function App() {
   const [selectedCameras, setSelectedCameras] = useState([]);
   const [allCameras] = useState([
-    { id: 'Camera1', url: 'http://192.168.1.71:81/stream' }
+    { id: 'Camera1', url: 'http://192.168.56.234:81/stream' }
   ]);
 
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
-  const [captureSettings, setCaptureSettings] = useState({ interval: 5, count: 1 });
+  const [captureSettings, setCaptureSettings] = useState({ startDate: '', endDate: '', interval: 5 });
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const handleSelectCamera = (camera) => {
@@ -33,7 +34,7 @@ function App() {
   };
 
   const handleSaveSettings = () => {
-    // Logic for saving settings if needed can be added here
+    // Simply closes the settings modal without sending data to the server
     setIsSettingsOpen(false);
   };
 
@@ -52,7 +53,7 @@ function App() {
           className="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition duration-200"
           onClick={toggleSettings}
         >
-          Capture Settings
+          Capture Ayarları
         </button>
       </div>
 
@@ -63,7 +64,8 @@ function App() {
             onSelectCamera={handleSelectCamera}
             openAllCameras={openAllCameras}
             closeAllCameras={closeAllCameras}
-            selectedCameras={selectedCameras} // Pass the selected cameras
+            selectedCameras={selectedCameras}
+            captureSettings={captureSettings} // Pass capture settings
           />
         </div>
       )}
@@ -76,21 +78,35 @@ function App() {
       {isSettingsOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-gray-100 p-4 rounded-lg shadow-md w-1/3">
-            <h3 className="text-lg font-semibold mb-2">Capture Settings</h3>
+            <h3 className="text-lg font-semibold mb-2">Capture Ayarları</h3>
+
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Çekim Aralığı (saniye)</label>
+              <label className="block text-sm font-medium text-gray-700">Başlangıç Tarihi</label>
               <input
-                value={captureSettings.interval}
-                onChange={(e) => setCaptureSettings({ ...captureSettings, interval: Number(e.target.value) })}
+                type="datetime-local"
+                value={captureSettings.startDate}
+                onChange={(e) => setCaptureSettings({ ...captureSettings, startDate: e.target.value })}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2"
               />
             </div>
+
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Çekim Sayısı</label>
+              <label className="block text-sm font-medium text-gray-700">Bitiş Tarihi</label>
               <input
-                value={captureSettings.count}
-                onChange={(e) => setCaptureSettings({ ...captureSettings, count: Number(e.target.value) })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2 " // Center text for the count input
+                type="datetime-local"
+                value={captureSettings.endDate}
+                onChange={(e) => setCaptureSettings({ ...captureSettings, endDate: e.target.value })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Çekim Aralığı (saniye)</label>
+              <input
+                type="number"
+                value={captureSettings.interval}
+                onChange={(e) => setCaptureSettings({ ...captureSettings, interval: Number(e.target.value) })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2"
               />
             </div>
 
@@ -99,13 +115,13 @@ function App() {
                 onClick={handleSaveSettings}
                 className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition duration-200"
               >
-                Save Settings
+                Ayarları Kaydet
               </button>
               <button
                 onClick={toggleSettings}
                 className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-200"
               >
-                Close
+                Kapat
               </button>
             </div>
           </div>
